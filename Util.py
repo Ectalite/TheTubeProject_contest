@@ -53,12 +53,13 @@ def write(arduino,x):
 
 
 def readToBuffer(arduino, readingBuffer):
-
+    print("Start read thread")
     while True:
         if arduino.inWaiting() > 0:
             try:
                 line = arduino.readline().strip()
                 values = line.decode('ascii').split(';')
                 readingBuffer.append(tuple(values))
+                print(line)
             except ValueError:  # this deals will the error
                 print("!! Warning, Unable to put data in read buffer !!")
