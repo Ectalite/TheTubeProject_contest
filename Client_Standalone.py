@@ -23,7 +23,7 @@ readingBuffer = []
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print('Chargement de la trajectoire')
-    TrajData = Util.LoadDataFile('Trajectoire_TheTube.csv')
+    TrajData = Util.LoadDataFile('Trajectoire_SautUnitaire.csv')
     TrajData.plot()
     TrajLen = TrajData.size - 1
     plt.show()
