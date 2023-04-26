@@ -36,6 +36,7 @@ if __name__ == '__main__':
     writeThread = threading.Thread(target=Util.trajectory_generation, args=(arduino, TrajIndex, TrajLen, TrajData, stop_event), daemon=True)
 
     print('Passage de l\'Arduino dans le mode du concours')
+    Util.write(arduino, 'monitor')
     Util.write(arduino, 'contest')
     time.sleep(10)
 
