@@ -17,7 +17,7 @@ TrajData = pd.Series()
 
 stop_event = threading.Event()
 
-arduino = serial.Serial(port='COM7', baudrate=115200, timeout=.1)
+arduino = serial.Serial(port='COM6', baudrate=115200, timeout=.1)
 readingBuffer = []
 
 # Press the green button in the gutter to run the script.
@@ -35,7 +35,11 @@ if __name__ == '__main__':
 
     print('Passage de l\'Arduino dans le mode du concours')
     Util.write(arduino,'contest')
-    time.sleep(10)
+    time.sleep(5)
+    
+    Util.write(arduino,'start')
+    
+    time.sleep(3)
 
     print('Démarrage des threads')
     ReadThread.start()
