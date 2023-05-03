@@ -54,6 +54,9 @@ def write(arduino,x):
 
 def readToBuffer(arduino, readingBuffer):
     print("Start read thread")
+    # Réinitialisation des tampons d'entrée et de sortie
+    arduino.reset_input_buffer()
+    arduino.reset_output_buffer()
     while True:
         if arduino.inWaiting() > 0:
             try:

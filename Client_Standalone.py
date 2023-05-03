@@ -12,21 +12,44 @@ from scipy import integrate
 import sys
 
 
-TrajIndex = 0
-TrajLen = 0
-TrajData = pd.Series()
 
 
-stop_event = threading.Event()
 
-arduino = serial.Serial(port='COM6', baudrate=115200, timeout=.1)
-readingBuffer = []
+
+
+#arduino = serial.Serial(port='/dev/cu.usbmodem4', baudrate=115200, timeout=.1)
+
+#print('Reset arduino')
+#Util.write(arduino, 'reset')
+#time.sleep(10)
+
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print('Reset arduino')
-    Util.write(arduino, 'reset')
+    arduino = serial.Serial(port='/dev/cu.usbmodem1', baudrate=115200, timeout=.1)
+    
+    #Util.write(arduino, 'Kp=310')
+    #time.sleep(1)
+    #Util.write(arduino, 'Ki=6')
+    #time.sleep(1)
+    #Util.write(arduino, 'Kd=50')
+    #time.sleep(1)
+   
+    plt.close()
+    
+    TrajIndex = 0
+    TrajLen = 0
+    TrajData = pd.Series()
+    
+    stop_event = threading.Event()
+    
+    readingBuffer = []
+    
     time.sleep(1)
+    #print('Reset arduino')
+    #Util.write(arduino, 'reset')
+    #time.sleep(5)
     print('Chargement de la trajectoire')
     TrajData = Util.LoadDataFile('Trajectoire_SautUnitaire.csv')
     TrajData.plot()
@@ -38,28 +61,26 @@ if __name__ == '__main__':
     print('Création du Thread d\'écriture des informations de trajectoire')
     writeThread = threading.Thread(target=Util.trajectory_generation, args=(arduino, TrajIndex, TrajLen, TrajData, stop_event), daemon=True)
 
-    print('Démarrage des threads')
-    ReadThread.start()
-    
-
-
     print('Passage de l\'Arduino dans le mode du concours')
     #Util.write(arduino, 'monitor')
-    Util.write(arduino, 'contest')
-    time.sleep(10)
-
+    Util.write(arduino, 'contest\n')
+    Util.write(arduino, 'start\n')
+    time.sleep(5)
+    
+    print('Démarrage des threads')
+    ReadThread.start()
     writeThread.start()
     
     print('Concours en cours...')
     time.sleep(5) #TODO: Start/stop from server?
-    Util.write(arduino, 'start')
+    
 
     print('Trajectoire terminée, arrêt du thread d\'écriture et passage de l\'Arduino en mode "Quiet"')
     stop_event.set()
-    writeThread.join()
     Util.write(arduino, 'contest') #Permet de forcer la consigne de départ à 0
     time.sleep(2)
-    Util.write(arduino, 'quiet')
+    
+    #Util.write(arduino, 'quiet')
 
     print('Formattage du résultat final et calcul des statistiques')
     df_final = Util.formatFinalBufferintoDataFrame(readingBuffer)
@@ -91,4 +112,7 @@ if __name__ == '__main__':
         f.write(stats)
 
 
-
+    print("Stop threads")
+    writeThread.join()
+    readThread.join()
+    
