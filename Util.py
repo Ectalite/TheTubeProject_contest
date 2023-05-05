@@ -58,7 +58,9 @@ def readToBuffer(arduino, readingBuffer):
         if arduino.inWaiting() > 0:
             try:
                 line = arduino.readline().strip()
+                print(line)
                 values = line.decode('ascii').split(';')
                 readingBuffer.append(tuple(values))
+                
             except ValueError:  # this deals will the error
                 print("!! Warning, Unable to put data in read buffer !!")

@@ -17,14 +17,14 @@ TrajData = pd.Series()
 
 stop_event = threading.Event()
 
-arduino = serial.Serial(port='COM6', baudrate=115200, timeout=.1)
+arduino = serial.Serial(port='/dev/cu.usbmodem4', baudrate=115200, timeout=.1)
 readingBuffer = []
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print('Chargement de la trajectoire')
-    TrajData = Util.LoadDataFile('Trajectoire_SautUnitaire.csv')
-    TrajData.plot()
+    TrajData = Util.LoadDataFile('Trajectoire_TheTube.csv')
+    #TrajData.plot()
     TrajLen = TrajData.size - 1
     plt.show()
 
@@ -36,17 +36,15 @@ if __name__ == '__main__':
     print('Passage de l\'Arduino dans le mode du concours')
     Util.write(arduino,'contest')
     time.sleep(5)
-    
     Util.write(arduino,'start')
-    
     time.sleep(3)
-
+    
     print('Démarrage des threads')
     ReadThread.start()
     writeThread.start()
 
     print('Concours en cours...')
-    time.sleep(5) #TODO: Start/stop from server?
+    time.sleep(20) #TODO: Start/stop from server?
 
     print('Trajectoire terminée, arrêt du thread d\'écriture et passage de l\'Arduino en mode "Quiet"')
     stop_event.set()
